@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Learn Git</title>
+    <title>Split Screen with Command Line</title>
     <style>
       body,
       html {
@@ -34,6 +34,19 @@
         overflow-y: auto;
         margin-bottom: 10px;
       }
+      #input-container {
+        display: flex;
+        align-items: center;
+      }
+
+      #input-container::before {
+        content: "$";
+        color: #0f0;
+        font-family: monospace;
+        font-size: 16px;
+        margin-right: 10px; /* Adjust spacing between $ and input */
+      }
+
       #input {
         background-color: #000;
         color: #0f0;
@@ -42,6 +55,8 @@
         font-family: monospace;
         font-size: 16px;
         width: 100%;
+        padding: 5px; /* Adjust padding as needed */
+        box-sizing: border-box;
       }
     </style>
   </head>
@@ -49,7 +64,9 @@
     <div id="content"><a>Instructions go here</a></div>
     <div id="cli-section">
       <div id="terminal">Code goes here</div>
-      <input type="text" id="input" autofocus />
+      <div id="input-container">
+        <input type="text" id="input" autofocus />
+      </div>
     </div>
   </body>
 </html>
