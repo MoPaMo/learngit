@@ -4,6 +4,9 @@ let lessonDiv = document.getElementById("lesson");
 let terminal = document.getElementById("terminal");
 
 let currentStep = 0;
+let userCommitMessages = [];
+let userFileContents = {};
+
 let lessons = [
   {
     instruction:
@@ -29,9 +32,13 @@ nothing to commit (create/copy files and use "git add" to track)`,
   },
   {
     instruction:
-      "Great! Now let's create a new file. Type 'echo \"Hello, Git!\" > README.md' to create a README file.",
-    expectedInput: 'echo "Hello, Git!" > README.md',
-    response: "", // Echo doesn't produce output unless there's an error
+      "Great! Now let's create a new file. Type 'echo 'Hello, World!' > README.md'.",
+    expectedInput: /^echo ".*" > README\.md$/,
+    response: (input) => {
+      const content = input.match(/"(.*)"/)[1];
+      userFileContents["README.md"] = content + "\n";
+      return "";
+    },
   },
   {
     instruction:
@@ -51,7 +58,7 @@ nothing added to commit but untracked files present (use "git add" to track)`,
     instruction:
       "Let's add the README file to the staging area. Type 'git add README.md'.",
     expectedInput: "git add README.md",
-    response: "", // git add doesn't produce output unless there's an error
+    response: "",
   },
   {
     instruction:
@@ -67,17 +74,25 @@ Changes to be committed:
   },
   {
     instruction:
-      "Now, let's commit our changes. Type 'git commit -m \"Initial commit\"'.",
-    expectedInput: 'git commit -m "Initial commit"',
-    response: `[master (root-commit) f7fde4a] Initial commit
+      "Now, let's commit our changes. Type 'git commit -m 'added README' '.",
+    expectedInput: /^git commit -m ".*"$/,
+    response: (input) => {
+      const message = input.match(/"(.*)"/)[1];
+      userCommitMessages.push(message);
+      return `[master (root-commit) f7fde4a] ${message}
  1 file changed, 1 insertion(+)
- create mode 100644 README.md`,
+ create mode 100644 README.md`;
+    },
   },
   {
     instruction:
-      "Let's modify our README file. Type 'echo \"Git is awesome!\" >> README.md'.",
-    expectedInput: 'echo "Git is awesome!" >> README.md',
-    response: "", // Echo doesn't produce output unless there's an error
+      "Let's modify our README file. Type 'echo'Hello, World (again)'>> README.md'.",
+    expectedInput: /^echo ".*" >> README\.md$/,
+    response: (input) => {
+      const content = input.match(/"(.*)"/)[1];
+      userFileContents["README.md"] += content + "\n";
+      return "";
+    },
   },
   {
     instruction: "Check the status to see the changes. Type 'git status'.",
@@ -94,46 +109,57 @@ no changes added to commit (use "git add" and/or "git commit -a")`,
     instruction:
       "Let's see the differences in our file. Type 'git diff README.md'.",
     expectedInput: "git diff README.md",
-    response: `diff --git a/README.md b/README.md
+    response: () => {
+      const lines = userFileContents["README.md"].split("\n");
+      return `diff --git a/README.md b/README.md
 index 670a245..a371801 100644
 --- a/README.md
 +++ b/README.md
-@@ -1 +1,2 @@
- Hello, Git!
-+Git is awesome!`,
+@@ -1 +1,${lines.length} @@
+-${lines[0]}
++${lines.join("\n+")}`;
+    },
   },
   {
     instruction:
       "Now, let's stage and commit these changes. First, add the file with 'git add README.md'.",
     expectedInput: "git add README.md",
-    response: "", // git add doesn't produce output unless there's an error
+    response: "",
   },
   {
     instruction:
-      "Commit the changes with a message. Type 'git commit -m \"Update README\"'.",
-    expectedInput: 'git commit -m "Update README"',
-    response: `[master 5d60f2a] Update README
- 1 file changed, 1 insertion(+)`,
+      "Commit the changes with a message. Type 'git commit -m 'changed README' '.",
+    expectedInput: /^git commit -m ".*"$/,
+    response: (input) => {
+      const message = input.match(/"(.*)"/)[1];
+      userCommitMessages.push(message);
+      return `[master 5d60f2a] ${message}
+ 1 file changed, 1 insertion(+)`;
+    },
   },
   {
     instruction: "Let's view the commit history. Type 'git log'.",
     expectedInput: "git log",
-    response: `commit 5d60f2a9a0e96d6f4c2f87df4a1a9e16d1dfcce0 (HEAD -> master)
+    response: () => {
+      let log = "";
+      for (let i = userCommitMessages.length - 1; i >= 0; i--) {
+        log += `commit ${Math.random()
+          .toString(16)
+          .substr(2, 40)} (HEAD -> master)
 Author: Your Name <your.email@example.com>
-Date:   Fri Jul 5 12:00:00 2024 +0000
+Date:   ${new Date().toUTCString()}
 
-    Update README
+    ${userCommitMessages[i]}
 
-commit f7fde4a54fd60157bcd369b61d6870972b2f330f
-Author: Your Name <your.email@example.com>
-Date:   Fri Jul 5 11:30:00 2024 +0000
-
-    Initial commit`,
+`;
+      }
+      return log.trim();
+    },
   },
   {
     instruction: "Let's create a new branch. Type 'git branch feature'.",
     expectedInput: "git branch feature",
-    response: "", // git branch doesn't produce output unless there's an error
+    response: "",
   },
   {
     instruction:
@@ -143,16 +169,24 @@ Date:   Fri Jul 5 11:30:00 2024 +0000
   },
   {
     instruction:
-      "Make a change in the feature branch. Type 'echo \"This is a new feature.\" >> README.md'.",
-    expectedInput: 'echo "This is a new feature." >> README.md',
-    response: "", // Echo doesn't produce output unless there's an error
+      "Make a change in the feature branch. Type 'echo 'Hello, World!'>> README.md'.",
+    expectedInput: /^echo ".*" >> README\.md$/,
+    response: (input) => {
+      const content = input.match(/"(.*)"/)[1];
+      userFileContents["README.md"] += content + "\n";
+      return "";
+    },
   },
   {
     instruction:
-      "Stage and commit the change. Type 'git add README.md && git commit -m \"Add feature\"'.",
-    expectedInput: 'git add README.md && git commit -m "Add feature"',
-    response: `[feature 7d8f3b9] Add feature
- 1 file changed, 1 insertion(+)`,
+      "Stage and commit the change. Type 'git add README.md && git commit -m 'Added README'  '",
+    expectedInput: /^git add README\.md && git commit -m ".*"$/,
+    response: (input) => {
+      const message = input.match(/"(.*)"/)[1];
+      userCommitMessages.push(message);
+      return `[feature 7d8f3b9] ${message}
+ 1 file changed, 1 insertion(+)`;
+    },
   },
   {
     instruction:
@@ -202,9 +236,20 @@ input.addEventListener("keyup", (event) => {
     let userInput = input.value.trim();
     updateTerminal(userInput);
 
-    if (userInput === lessons[currentStep].expectedInput) {
-      if (lessons[currentStep].response) {
-        updateTerminal(lessons[currentStep].response, false);
+    let currentLesson = lessons[currentStep];
+    let isInputValid =
+      typeof currentLesson.expectedInput === "string"
+        ? userInput === currentLesson.expectedInput
+        : currentLesson.expectedInput.test(userInput);
+
+    if (isInputValid) {
+      let response =
+        typeof currentLesson.response === "function"
+          ? currentLesson.response(userInput)
+          : currentLesson.response;
+
+      if (response) {
+        updateTerminal(response, false);
       }
       currentStep++;
 
