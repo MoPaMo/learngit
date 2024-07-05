@@ -47,7 +47,6 @@ Untracked files:
 
 nothing added to commit but untracked files present (use "git add" to track)`,
   },
-
   {
     instruction:
       "Let's add the README file to the staging area. Type 'git add README.md'.",
@@ -59,20 +58,20 @@ nothing added to commit but untracked files present (use "git add" to track)`,
       "Check the status again to see the changes. Type 'git status'.",
     expectedInput: "git status",
     response: `On branch master
-  
-  No commits yet
-  
-  Changes to be committed:
-    (use "git rm --cached <file>..." to unstage)
-          new file:   README.md`,
+
+No commits yet
+
+Changes to be committed:
+  (use "git rm --cached <file>..." to unstage)
+        new file:   README.md`,
   },
   {
     instruction:
       "Now, let's commit our changes. Type 'git commit -m \"Initial commit\"'.",
     expectedInput: 'git commit -m "Initial commit"',
     response: `[master (root-commit) f7fde4a] Initial commit
-   1 file changed, 1 insertion(+)
-   create mode 100644 README.md`,
+ 1 file changed, 1 insertion(+)
+ create mode 100644 README.md`,
   },
   {
     instruction:
@@ -84,24 +83,24 @@ nothing added to commit but untracked files present (use "git add" to track)`,
     instruction: "Check the status to see the changes. Type 'git status'.",
     expectedInput: "git status",
     response: `On branch master
-  Changes not staged for commit:
-    (use "git add <file>..." to update what will be committed)
-    (use "git restore <file>..." to discard changes in working directory)
-          modified:   README.md
-  
-  no changes added to commit (use "git add" and/or "git commit -a")`,
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   README.md
+
+no changes added to commit (use "git add" and/or "git commit -a")`,
   },
   {
     instruction:
       "Let's see the differences in our file. Type 'git diff README.md'.",
     expectedInput: "git diff README.md",
     response: `diff --git a/README.md b/README.md
-  index 670a245..a371801 100644
-  --- a/README.md
-  +++ b/README.md
-  @@ -1 +1,2 @@
-   Hello, Git!
-  +Git is awesome!`,
+index 670a245..a371801 100644
+--- a/README.md
++++ b/README.md
+@@ -1 +1,2 @@
+ Hello, Git!
++Git is awesome!`,
   },
   {
     instruction:
@@ -114,22 +113,22 @@ nothing added to commit but untracked files present (use "git add" to track)`,
       "Commit the changes with a message. Type 'git commit -m \"Update README\"'.",
     expectedInput: 'git commit -m "Update README"',
     response: `[master 5d60f2a] Update README
-   1 file changed, 1 insertion(+)`,
+ 1 file changed, 1 insertion(+)`,
   },
   {
     instruction: "Let's view the commit history. Type 'git log'.",
     expectedInput: "git log",
     response: `commit 5d60f2a9a0e96d6f4c2f87df4a1a9e16d1dfcce0 (HEAD -> master)
-  Author: Your Name <your.email@example.com>
-  Date:   Fri Jul 5 12:00:00 2024 +0000
-  
-      Update README
-  
-  commit f7fde4a54fd60157bcd369b61d6870972b2f330f
-  Author: Your Name <your.email@example.com>
-  Date:   Fri Jul 5 11:30:00 2024 +0000
-  
-      Initial commit`,
+Author: Your Name <your.email@example.com>
+Date:   Fri Jul 5 12:00:00 2024 +0000
+
+    Update README
+
+commit f7fde4a54fd60157bcd369b61d6870972b2f330f
+Author: Your Name <your.email@example.com>
+Date:   Fri Jul 5 11:30:00 2024 +0000
+
+    Initial commit`,
   },
   {
     instruction: "Let's create a new branch. Type 'git branch feature'.",
@@ -153,7 +152,7 @@ nothing added to commit but untracked files present (use "git add" to track)`,
       "Stage and commit the change. Type 'git add README.md && git commit -m \"Add feature\"'.",
     expectedInput: 'git add README.md && git commit -m "Add feature"',
     response: `[feature 7d8f3b9] Add feature
-   1 file changed, 1 insertion(+)`,
+ 1 file changed, 1 insertion(+)`,
   },
   {
     instruction:
@@ -166,11 +165,18 @@ nothing added to commit but untracked files present (use "git add" to track)`,
       "Now, let's merge the feature branch. Type 'git merge feature'.",
     expectedInput: "git merge feature",
     response: `Updating 5d60f2a..7d8f3b9
-  Fast-forward
-   README.md | 1 +
-   1 file changed, 1 insertion(+)`,
+Fast-forward
+ README.md | 1 +
+ 1 file changed, 1 insertion(+)`,
   },
 ];
+
+function formatForHtml(text) {
+  return text
+    .replace(/\n/g, "<br>")
+    .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;")
+    .replace(/ {2}/g, "&nbsp;&nbsp;");
+}
 
 function updateLesson() {
   lessonDiv.textContent = lessons[currentStep].instruction;
@@ -180,7 +186,7 @@ function updateTerminal(input, isCommand = true) {
   if (isCommand) {
     terminal.innerHTML += `$ ${input}<br>`;
   } else {
-    terminal.innerHTML += `${input}<br>`;
+    terminal.innerHTML += formatForHtml(input) + "<br>";
   }
   terminal.scrollTop = terminal.scrollHeight;
 }
