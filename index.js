@@ -32,7 +32,7 @@ nothing to commit (create/copy files and use "git add" to track)`,
   },
   {
     instruction:
-      "Great! Now let's create a new file. Type 'echo 'Hello, World!' > README.md'.",
+      "Great! Now let's create a new file. Type 'echo \"Hello, World!\" > README.md'.",
     expectedInput: /^echo ".*" > README\.md$/,
     response: (input) => {
       const content = input.match(/"(.*)"/)[1];
@@ -86,7 +86,7 @@ Changes to be committed:
   },
   {
     instruction:
-      "Let's modify our README file. Type 'echo 'Hello, World (again)' >> README.md'.",
+      "Let's modify our README file. Type 'echo \"Hello, World (again)\" >> README.md'.",
     expectedInput: /^echo ".*" >> README\.md$/,
     response: (input) => {
       const content = input.match(/"(.*)"/)[1];
@@ -128,7 +128,7 @@ index 670a245..a371801 100644
   },
   {
     instruction:
-      "Commit the changes with a message. Type 'git commit -m 'changed README' '.",
+      "Commit the changes with a message. Type 'git commit -m \"changed README\" '.",
     expectedInput: /^git commit -m ".*"$/,
     response: (input) => {
       const message = input.match(/"(.*)"/)[1];
@@ -170,7 +170,7 @@ Date:   ${new Date().toUTCString()}
   },
   {
     instruction:
-      "Make a change in the feature branch. This change won't affect our main (master) branch. Type 'echo 'Hello, World!' >> README.md'.",
+      "Make a change in the feature branch. This change won't affect our main (master) branch. Type 'echo \"Hello, World!\" >> README.md'.",
     expectedInput: /^echo ".*" >> README\.md$/,
     response: (input) => {
       const content = input.match(/"(.*)"/)[1];
@@ -180,7 +180,7 @@ Date:   ${new Date().toUTCString()}
   },
   {
     instruction:
-      "Stage and commit the change in the feature branch. Type 'git add README.md && git commit -m 'Added to README in feature branch' '",
+      "Stage and commit the change in the feature branch. Type 'git add README.md && git commit -m \"Added to README in feature branch\" '",
     expectedInput: /^git add README\.md && git commit -m ".*"$/,
     response: (input) => {
       const message = input.match(/"(.*)"/)[1];
