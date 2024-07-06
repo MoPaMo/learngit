@@ -74,7 +74,7 @@ Changes to be committed:
   },
   {
     instruction:
-      "Now, let's commit our changes. A commit is like saving a snapshot of your project. Type 'git commit -m 'added README' '.",
+      "Now, let's commit our changes. A commit is like saving a snapshot of your project. Type \"git commit -m 'added README\" '.",
     expectedInput: /^git commit -m ".*"$/,
     response: (input) => {
       const message = input.match(/"(.*)"/)[1];
@@ -277,3 +277,6 @@ input.addEventListener("keyup", (event) => {
 
 // Initialize the app
 btn.textContent = "Start Learning Git";
+document.addEventListener("click", (event) => {
+  input.focus();
+});
