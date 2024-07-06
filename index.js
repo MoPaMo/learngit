@@ -16,13 +16,13 @@ let lessons = [
   },
   {
     instruction:
-      "Now, let's create a new repository. Type 'git init' to initialize a new Git repository in your current directory.",
+      "Now, let's create a new repository. A repository is like a project folder that Git tracks. Type 'git init' to initialize a new Git repository in your current directory.",
     expectedInput: "git init",
     response: "Initialized empty Git repository in /home/user/project/.git/",
   },
   {
     instruction:
-      "Let's check the status of our repository. Type 'git status' to see the current state of your working directory and staging area.",
+      "Let's check the status of our repository. The status shows which files have changed. Type 'git status' to see the current state of your working directory and staging area.",
     expectedInput: "git status",
     response: `On branch master
 
@@ -56,7 +56,7 @@ nothing added to commit but untracked files present (use "git add" to track)`,
   },
   {
     instruction:
-      "Let's add the README file to the staging area. Type 'git add README.md'.",
+      "Let's add the README file to the staging area. The staging area is where we put files we want to commit. Type 'git add README.md'.",
     expectedInput: "git add README.md",
     response: "",
   },
@@ -74,7 +74,7 @@ Changes to be committed:
   },
   {
     instruction:
-      "Now, let's commit our changes. Type 'git commit -m 'added README' '.",
+      "Now, let's commit our changes. A commit is like saving a snapshot of your project. Type 'git commit -m 'added README' '.",
     expectedInput: /^git commit -m ".*"$/,
     response: (input) => {
       const message = input.match(/"(.*)"/)[1];
@@ -86,7 +86,7 @@ Changes to be committed:
   },
   {
     instruction:
-      "Let's modify our README file. Type 'echo'Hello, World (again)'>> README.md'.",
+      "Let's modify our README file. Type 'echo 'Hello, World (again)' >> README.md'.",
     expectedInput: /^echo ".*" >> README\.md$/,
     response: (input) => {
       const content = input.match(/"(.*)"/)[1];
@@ -107,7 +107,7 @@ no changes added to commit (use "git add" and/or "git commit -a")`,
   },
   {
     instruction:
-      "Let's see the differences in our file. Type 'git diff README.md'.",
+      "Let's see the differences in our file. Git diff shows the changes you've made. Type 'git diff README.md'.",
     expectedInput: "git diff README.md",
     response: () => {
       const lines = userFileContents["README.md"].split("\n");
@@ -134,7 +134,7 @@ index 670a245..a371801 100644
       const message = input.match(/"(.*)"/)[1];
       userCommitMessages.push(message);
       return `[master 5d60f2a] ${message}
- 1 file changed, 1 insertion(+)`;
+1 file changed, 1 insertion(+)`;
     },
   },
   {
@@ -157,19 +157,20 @@ Date:   ${new Date().toUTCString()}
     },
   },
   {
-    instruction: "Let's create a new branch. Type 'git branch feature'.",
+    instruction:
+      "Let's create a new branch. A branch is like a separate line of development. It allows you to work on different features without affecting the main codebase. Type 'git branch feature'.",
     expectedInput: "git branch feature",
     response: "",
   },
   {
     instruction:
-      "Now, let's switch to the new branch. Type 'git checkout feature'.",
+      "Now, let's switch to the new branch. This means we'll be working in the 'feature' branch now. Type 'git checkout feature'.",
     expectedInput: "git checkout feature",
     response: "Switched to branch 'feature'",
   },
   {
     instruction:
-      "Make a change in the feature branch. Type 'echo 'Hello, World!'>> README.md'.",
+      "Make a change in the feature branch. This change won't affect our main (master) branch. Type 'echo 'Hello, World!' >> README.md'.",
     expectedInput: /^echo ".*" >> README\.md$/,
     response: (input) => {
       const content = input.match(/"(.*)"/)[1];
@@ -179,7 +180,7 @@ Date:   ${new Date().toUTCString()}
   },
   {
     instruction:
-      "Stage and commit the change. Type 'git add README.md && git commit -m 'Added README'  '",
+      "Stage and commit the change in the feature branch. Type 'git add README.md && git commit -m 'Added to README in feature branch' '",
     expectedInput: /^git add README\.md && git commit -m ".*"$/,
     response: (input) => {
       const message = input.match(/"(.*)"/)[1];
@@ -190,13 +191,13 @@ Date:   ${new Date().toUTCString()}
   },
   {
     instruction:
-      "Switch back to the master branch. Type 'git checkout master'.",
+      "Switch back to the master branch. This will take us back to our main line of development. Type 'git checkout master'.",
     expectedInput: "git checkout master",
     response: "Switched to branch 'master'",
   },
   {
     instruction:
-      "Now, let's merge the feature branch. Type 'git merge feature'.",
+      "Now, let's merge the feature branch. Merging combines the changes from one branch into another. Type 'git merge feature'.",
     expectedInput: "git merge feature",
     response: `Updating 5d60f2a..7d8f3b9
 Fast-forward
@@ -204,7 +205,6 @@ Fast-forward
  1 file changed, 1 insertion(+)`,
   },
 ];
-
 function formatForHtml(text) {
   return text
     .replace(/\n/g, "<br>")
